@@ -13,3 +13,14 @@ from matplotlib.ticker import FuncFormatter
 import folium
 from folium.plugins import MarkerCluster
 ```
+
+"""python
+# 데이터 불러오기
+card1 = pd.read_csv('/content/제주도_카드_17.csv', encoding='cp949')
+card2 = pd.read_csv('/content/제주도_카드_18.csv', encoding='cp949')
+card3 = pd.read_csv('/content/제주도_카드_19.csv', encoding='cp949')
+card4 = pd.read_csv('/content/제주도_카드_20.csv', encoding='cp949')
+
+# 데이터 출력
+card1, card2, card3, card4
+"""
