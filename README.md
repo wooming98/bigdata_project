@@ -1,9 +1,7 @@
 # Big_Data_Project
 ## 제주도 창업을 위한 소비 패턴 분석
-### 01. 데이터 준비하기
-
+### 01. 제주도의 연간 카드 이용금액은 어떻게 될까?
 ```python
-# 패키지 설치 및 로드
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -15,7 +13,6 @@ from folium.plugins import MarkerCluster
 ```
 
 ```python
-# 데이터 불러오기
 card1 = pd.read_csv('/content/제주도_카드_17.csv', encoding='cp949')
 card2 = pd.read_csv('/content/제주도_카드_18.csv', encoding='cp949')
 card3 = pd.read_csv('/content/제주도_카드_19.csv', encoding='cp949')
@@ -31,9 +28,6 @@ card = pd.concat([card1, card2, card3, card4])
 
 # 데이터 크기
 card.shape
-
-# 데이터 속성
-card.info()
 ```
 
 ```python
@@ -58,11 +52,6 @@ card_data['이용자 구분'] = card_data['이용자 구분'].replace(['중국',
 
 # 데이터 출력
 card_data
-```
-
-```python
-# 데이터 속성 출력
-card_data.info()
 ```
 
 ```python
@@ -115,8 +104,8 @@ plt.bar(total_amount['연도'], total_amount['총 이용금액'], color=green_pa
 plt.show()
 ```
 
+### 02. 업종별 대분류에 따른 이용금액 차이 - 업종별로 얼마나 차이가 날까?
 ```python
-# 새로운 데이터프레임 생성
 grouped_data = card_data.groupby(['연', '업종명 대분류'])['이용금액'].sum().reset_index()
 
 # 새로운 데이터프레임 생성
@@ -174,6 +163,7 @@ plt.tight_layout()
 plt.show()
 ```
 
+### 03. 소매업 종류 간 이용금액 차이 - 소매업 종류 중 어떤 업종이 상승세일까?
 ```python
 # 업종명 대분류가 소매업인 데이터 추출
 retail_data = card_data[card_data['업종명 대분류'] == '소매업']
@@ -182,7 +172,9 @@ retail_data = card_data[card_data['업종명 대분류'] == '소매업']
 top_5_categories_by_year = retail_data.groupby(['연', '업종명'])['이용금액'].sum().reset_index()
 top_5_categories_by_year = top_5_categories_by_year.sort_values(by=['연', '이용금액'], ascending=[True, False])
 top_5_categories_by_year = top_5_categories_by_year.groupby('연').head(5)
+```
 
+```python
 # 꺾은선 그래프 시각화
 plt.figure(figsize=(8, 4))
 sns.lineplot(x='연', y='이용금액', hue='업종명', marker='o', data=top_5_categories_by_year, palette='viridis')
@@ -203,6 +195,7 @@ plt.legend(title='업종명', bbox_to_anchor=(1, 1.015))
 plt.show()
 ```
 
+### 04. 체인화 편의점과 슈퍼마켓 - 이용자와 성별, 이용건수, 이용금액은 어떻게 될까?
 ```python
 # 업종명이 체인화 편의점이거나 슈퍼마켓인 행만 추출
 month_data = card_data[card_data['업종명'].isin(['체인화 편의점', '슈퍼마켓'])]
@@ -249,6 +242,7 @@ plt.tight_layout()
 plt.show()
 ```
 
+### 05. 지역 간 유동인구 차이 - 유동인구는 어디가 가장 높을까?
 ```python
 # 데이터 불러오기
 fp = pd.read_csv('/content/제주도_유동인구.csv', encoding='cp949')
@@ -280,33 +274,23 @@ plt.gca().get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}
 plt.show()
 ```
 
+### 06. 편의점과 마트 분포 지역 - 어느 지역에 가장 많이 분포되어 있을까?
 ```python
 # 데이터 불러오기
 mart = pd.read_csv('/content/제주관광공사_마을편의시설.csv', encoding='utf-8')
-
-mart
-```
-
-```python
-# 데이터 속성
-mart.info()
 ```
 
 ```python
 # 사용하지 않는 컬럼, 행 삭제
 mart.drop(columns = ['인허가일자', '상세영업상태코드', '상세영업상태명', '소재지전화번호', '데이터기준일자'], axis=1, inplace=True)
-
-# 데이터 출력
-mart
 ```
 
 ```python
 # 편의시설유형이 편의점이거나 마트인 행만 추출
 mart_data = mart[mart['편의시설유형'].isin(['편의점', '마트'])].reset_index(drop=True)
-
-mart_data
 ```
 
+#### [지도 1]
 ```python
 # 지도 생성
 map = folium.Map(location=[33.3628, 126.5338], zoom_start=11, tiles='CartoDB dark_matter')
@@ -329,6 +313,7 @@ for name, lat, lng, facility_type in zip(mart_data.편의시설명, mart_data.�
 map
 ```
 
+#### [지도 2]
 ```python
 # 지도 생성
 map = folium.Map(location=[33.3628, 126.5338], zoom_start=11)
@@ -355,6 +340,8 @@ folium.GeoJson(geojson_file, name='geojson_layer',
 map
 ```
 
+
+### 07. 편의점과 마트 카드 이용금액 - 읍별 중 어느 읍에서 가장 많은 금액을 썼을까?
 ```python
 # 읍별 이용금액 계산
 area = month_data.groupby('읍면동명')['이용금액'].sum().reset_index()
